@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const checkFields=require('../modules/checkfields');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -50,12 +51,6 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const requiredFields = ["name","email","city"];
-  
-    if(!checkFields.checkFields(req.body,requiredFields)){
-      return res.status(400).json({ message: 'Reguired fields are incorrect' });
-    }
-
     const user = await User.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!user) {
@@ -63,6 +58,7 @@ const updateUser = async (req, res) => {
     }
 
     res.status(200).json({ message: 'User updated', user });
+
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }

@@ -47,13 +47,7 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const requiredFields = ["name","stock","price"];
-  
-    if(!checkFields.checkFields(req.body,requiredFields)){
-      return res.status(400).json({ message: 'Reguired fields are incorrect' });
-    }
-
+    
     const product = await Product.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!product) {
@@ -76,7 +70,9 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    res.status(204).json({message:"Product deleted"});
+    res.status(200).json({
+      message:"Product deleted"
+    });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }

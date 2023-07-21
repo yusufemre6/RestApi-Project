@@ -5,7 +5,6 @@ const Token = require('../models/token');
 
 const logoutMiddleware = async (req, res, next) => {
     try{
-
         const status= await (Token.findOne({ status: true }));
 
         if(!status){

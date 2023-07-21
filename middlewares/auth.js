@@ -22,15 +22,24 @@ const authMiddleware = (req, res, next) => {
     if (decoded.role !== 'Admin') {
       return res.status(403).json({ message: 'Forbidden' });
     }
-
-    const status= (Token.findOne({ value: token })).status;
-
-    if(status){
-      req.user = decoded;
-    }
-    else{
-      return res.status(401).json({ message:'You are no longer active' });
-    }
+ 
+    Token.findOne({ value: token })
+    .then(foundToken => {
+      if (foundToken) {
+        const status = foundToken.status;
+        if(status){
+          req.user = decoded;
+        }
+        else{
+          return res.status(401).json({ message:'You are no longer active' });
+        }
+      } else {
+        console.log('Token bulunamadı.');
+      }
+    })
+    .catch(err => {
+      console.error('Sorgu hatası:', err);
+    });   
     next();
   });
 };

@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const checkFields= require('../modules/checkfields'); 
 
 const getAllProducts = async (req, res) => {
   try {
@@ -11,11 +12,17 @@ const getAllProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name , stock , price } = req.body;
 
-    const product = await Product.create({ name });
+    const requiredFields = ["name","stock","price"];
+  
+    if(!checkFields.checkFields(req.body,requiredFields)){
+      return res.status(400).json({ message: 'Reguired fields are incorrect' });
+    }
 
-    res.status(201).json(product);
+    const product = await Product.create({ name, stock, price });
+
+    res.status(201).json({message:"Product created",product});
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -31,7 +38,7 @@ const getProductById = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    res.status(200).json(product);
+    res.status(200).json({message:"Product found",product});
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -40,15 +47,20 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
 
-    const product = await Product.findByIdAndUpdate(id, { name }, { new: true });
+    const requiredFields = ["name","stock","price"];
+  
+    if(!checkFields.checkFields(req.body,requiredFields)){
+      return res.status(400).json({ message: 'Reguired fields are incorrect' });
+    }
+
+    const product = await Product.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    res.status(200).json(product);
+    res.status(200).json({message:"Product updated",product});
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -64,7 +76,7 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    res.status(204).end();
+    res.status(204).json({message:"Product deleted"});
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }

@@ -4,18 +4,18 @@ const userController = require('../controllers/userController');
 const productController = require('../controllers/productController');
 
 //User rotaları
-router.get('/', userController.getAllUsers);
-router.post('/', userController.createUser);
-router.get('/:id', userController.getUserById);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.get('/getAllUsers', userController.getAllUsers);
+router.post('/createUser', userController.createUser);
+router.get('/getUserById/:id', userController.getUserById);
+router.patch('/updateUser/:id', userController.updateUser);
+router.delete('/deleteUser/:id', userController.deleteUser);
 
 
 // Product rotaları
-router.get('/', productController.getAllProducts);
-router.post('/', productController.createProduct);
-router.get('/:id', productController.getProductById);
-router.put('/:id', productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.get('/getAllProducts', productController.getAllProducts);
+router.post('/createProduct', productController.createProduct);
+router.get('/getProductById/:id', productController.getProductById);
+router.patch('/updateProduct/:id', productController.updateProduct);
+router.delete('/deleteProduct/:id', productController.deleteProduct);
 
 module.exports = router;

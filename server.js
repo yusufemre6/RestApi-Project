@@ -3,14 +3,12 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 
-// Diğer gerekli bağımlılıkları ve ortak yapılandırmaları burada tanımlayabilirsiniz.
+// Middleware
+const authMiddleware = require('./middlewares/auth');
 
 // Routes
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
-
-// Middleware
-const authMiddleware = require('./middlewares/auth');
 
 // Middleware kullanımı
 app.use(express.json());
@@ -18,8 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes tanımları
 app.use('/auth', authRoutes);
-app.use('/admin', authMiddleware, adminRoutes);
-
+app.use('/admin',authMiddleware ,adminRoutes);
 
 const connectDB = require('./config/db');
 connectDB();

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const Token = require('../models/token'); 
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -22,7 +23,14 @@ const authMiddleware = (req, res, next) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    req.user = decoded;
+    const status= (Token.findOne({ value: token })).status;
+
+    if(status){
+      req.user = decoded;
+    }
+    else{
+      return res.status(401).json({ message:'You are no longer active' });
+    }
     next();
   });
 };

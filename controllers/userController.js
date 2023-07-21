@@ -11,11 +11,20 @@ const getAllUsers = async (req, res) => {
 
 const createUser = async (req, res) => {
   try {
-    const { username, password, role } = req.body;
+    const { name, email, city} = req.body;
 
-    const user = await User.create({ username, password, role });
+    const requiredFields = ["name","email","city"];
+  
+    if(!checkFields.checkFields(req.body,requiredFields)){
+      return res.status(400).json({ message: 'Reguired fields are incorrect' });
+    }
 
-    res.status(201).json(user);
+    const user = await User.create({ name, email, city });
+
+    res.status(201).json({
+      message:'User creating is successfull',
+      user
+    });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -31,7 +40,7 @@ const getUserById = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({ message: 'User found', user });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -40,15 +49,20 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, password, role } = req.body;
 
-    const user = await User.findByIdAndUpdate(id, { username, password, role }, { new: true });
+    const requiredFields = ["name","email","city"];
+  
+    if(!checkFields.checkFields(req.body,requiredFields)){
+      return res.status(400).json({ message: 'Reguired fields are incorrect' });
+    }
+
+    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({ message: 'User updated', user });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
@@ -64,7 +78,7 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(204).end();
+    res.status(200).json({ message: 'User deleted'});
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }

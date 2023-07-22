@@ -44,4 +44,12 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, createUser, getUserById, updateUser, deleteUser };
+const uploadImgByUserId=async (req,res)=>{
+  try {
+    user.uploadImgByUserId(req,res);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+module.exports = { getAllUsers, createUser, getUserById, updateUser, deleteUser,uploadImgByUserId };

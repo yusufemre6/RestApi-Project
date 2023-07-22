@@ -28,10 +28,6 @@ class Admin {
     this.model = mongoose.model('Admin', this.schema);
   }
 
-  async createAdmin(name, email, password) {
-    return this.model.create({ name, email, password });
-  }
-
   async loginAdmin(req,res){
     try {
       const { email, password } = req.body;
@@ -52,7 +48,7 @@ class Admin {
       // Token oluşturma
       const token = await Token.create({value:jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1h' })});
 
-      //const tokenExpirationTime=36000;
+      const tokenExpirationTime=3600000;
 
       setTimeout(() => this.autoLogout(), tokenExpirationTime);
 

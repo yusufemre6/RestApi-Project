@@ -9,6 +9,7 @@ router.post('/createUser', userController.createUser);
 router.get('/getUserById/:id', userController.getUserById);
 router.patch('/updateUser/:id', userController.updateUser);
 router.delete('/deleteUser/:id', userController.deleteUser);
+router.patch('/uploadImgByUserId/:id', userController.uploadImgByUserId);
 
 
 // Product rotaları

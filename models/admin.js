@@ -33,36 +33,57 @@ class Admin {
   }
 
   async loginAdmin(req,res){
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
     
-    const admin = await this.model.findOne({ email });
+      const admin = await this.model.findOne({ email });
 
-    //Email kontolü
-    if (!admin) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      //Email kontolü
+      if (!admin) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+      // Şifre kontrolü
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
+      
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+
+      // Token oluşturma
+      const token = await Token.create({value:jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '3m' })});
+
+      const tokenExpirationTime=36000;
+
+      setTimeout(() => this.autoLogout(), tokenExpirationTime);
+
+      res.status(200).json({ 
+        message:admin.role+" login is successfully. Your token is here: ",
+        token:token
+      });
+    } catch (error) {
+      console.log(error)
     }
-    // Şifre kontrolü
-    const isPasswordValid = await bcrypt.compare(password, admin.password);
-    
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' });
-    }
-
-    // Token oluşturma
-    const token = await Token.create({value:jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1h' })});
-
-    res.status(200).json({ 
-      message:admin.role+" login is successfully. Your token is here: ",
-      token:token
-    });
   }
   async logoutAdmin(req,res){
-    const update = { status: false };
-    const updatedDocument = await Token.updateMany({},{$set: update});
-    res.status(200).json({ 
-      message:" logout is successfully",
-      status:'OK'
-    });
+    try {
+      const update = { status: false };
+      const updatedDocument = await Token.updateMany({},{$set: update});
+      res.status(200).json({ 
+        message:" logout is successfully",
+        status:'OK'
+      });
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async  autoLogout(){
+    try {
+      const update = { status: false };
+      const updatedDocument = await Token.updateMany({},{$set: update});
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

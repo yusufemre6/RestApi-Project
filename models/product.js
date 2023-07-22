@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const checkFields=require('../modules/checkfields');
+const checkFields=require('../helpers/checkfields');
 
 class ProductModel {
   constructor() {
@@ -33,7 +33,7 @@ class ProductModel {
       return res.status(400).json({ message: 'Reguired fields are incorrect' });
     }
 
-    const product = this.model.create({ name, stock, price });
+    const product = await this.model.create({ name, stock, price });
 
     res.status(201).json({message:"Product created",product});
     } catch (error) {
@@ -41,12 +41,12 @@ class ProductModel {
     }
   }
 
-  async getAllProducts(req,res){
+  async getAllProducts(req, res) {
     try {
       const products = await this.model.find();
       res.status(200).json(products);
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: 'Internal server error' });
     }  
   }
 
@@ -54,7 +54,7 @@ class ProductModel {
     try {
       const { id } = req.params;
 
-      const product = this.model.findById(id);
+      const product = await this.model.findById(id);
   
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -62,7 +62,7 @@ class ProductModel {
   
       res.status(200).json({message:"Product found",product});
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -70,7 +70,7 @@ class ProductModel {
     try {
       const { id } = req.params;
     
-      const product = this.model.findByIdAndUpdate(id, req.body, { new: true });
+      const product = await this.model.findByIdAndUpdate(id, req.body, { new: true });
 
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -78,7 +78,7 @@ class ProductModel {
 
       res.status(200).json({message:"Product updated",product});
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -86,7 +86,7 @@ class ProductModel {
     try {
       const { id } = req.params;
 
-      const product = this.model.findByIdAndDelete(id);
+      const product = await this.model.findByIdAndDelete(id);
 
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
@@ -96,7 +96,7 @@ class ProductModel {
         message:"Product deleted"
       });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

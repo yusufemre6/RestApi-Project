@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const checkFields=require('../modules/checkfields');
+const checkFields=require('../helpers/checkfields');
 
 class UserModel {
   constructor() {
@@ -37,32 +37,33 @@ class UserModel {
         return res.status(400).json({ message: 'Reguired fields are incorrect' });
       }
 
-      const user = this.model.create({ name, email, city });
+      const user = await this.model.create({ name, email, city });
 
       res.status(201).json({
         message:'User creating is successfull',
         user
       });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
   async getAllUsers(req,res) {
-   try {
-    const users = this.model.find();
-    console.log("1")
-    res.status(200).json({users});
-   } catch (error) {
-    console.log(error)
-   }
+    try {
+      const users = await this.model.find();
+  
+      res.status(200).json(users);
+    } catch (error) {
+
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   async getUserById(req,res){
     try {
       const { id } = req.params;
 
-      const user =  this.findById(id);
+      const user = await this.model.findById(id);
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -70,7 +71,7 @@ class UserModel {
 
       res.status(200).json({ message: 'User found', user });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -78,7 +79,7 @@ class UserModel {
     try {
       const { id } = req.params;
 
-      const user = this.model.findByIdAndUpdate(id, req.body, { new: true });
+      const user = await this.model.findByIdAndUpdate(id, req.body, { new: true });
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -86,7 +87,7 @@ class UserModel {
 
       res.status(200).json({ message: 'User updated', user });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -94,7 +95,7 @@ class UserModel {
     try {
       const { id } = req.params;
 
-      const user = this.model.findByIdAndDelete(id);
+      const user = await this.model.findByIdAndDelete(id);
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -102,7 +103,7 @@ class UserModel {
 
       res.status(200).json({ message: 'User deleted'});
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

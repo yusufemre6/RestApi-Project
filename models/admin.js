@@ -50,9 +50,9 @@ class Admin {
       }
 
       // Token oluşturma
-      const token = await Token.create({value:jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '3m' })});
+      const token = await Token.create({value:jwt.sign({ adminId: admin._id, role: admin.role }, process.env.JWT_SECRET, { expiresIn: '1h' })});
 
-      const tokenExpirationTime=36000;
+      //const tokenExpirationTime=36000;
 
       setTimeout(() => this.autoLogout(), tokenExpirationTime);
 
@@ -61,7 +61,7 @@ class Admin {
         token:token
       });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
   async logoutAdmin(req,res){
@@ -73,7 +73,7 @@ class Admin {
         status:'OK'
       });
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -82,7 +82,7 @@ class Admin {
       const update = { status: false };
       const updatedDocument = await Token.updateMany({},{$set: update});
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 }

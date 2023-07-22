@@ -1,5 +1,5 @@
 const Admin = require('../models/admin');
-const checkFields= require('../modules/checkfields');
+const checkFields= require('../helpers/checkfields');
 const Token = require('../models/token');
 
 
